@@ -1,9 +1,10 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+    <script src="jquery.min.js"></script>
+    <script src="underscore-min.js"></script>
     <script type="text/javascript">
-        function WebSocketTest()
-        {
+        $(document).ready(function(){
             if ("WebSocket" in window)
             {
                 // Let us open a web socket
@@ -24,13 +25,31 @@
                     // websocket is closed.
                     alert("Connection is closed..."); 
                 };
+                
+                function handle(x,y) {
+                    return function() {
+                        ws.send(x + '_' + y);
+                    }
+                }
+                _.map(_.range(81), function(t) {
+                    var px = t % 9;
+                    var py = Math.floor(t / 9);
+                    var point = document.createElement('div');
+                    $('#board').append(point);
+                    $(point).addClass('point');
+                    $(point).attr({
+                        x: px,
+                        y: py
+                    });
+                    $(point).click(handle(px,py));
+                });
             }
             else
             {
                 // The browser doesn't support WebSocket
                 alert("WebSocket NOT supported by your Browser!");
             }
-        }
+        });
     </script>
     <style>
         #board {
@@ -50,13 +69,7 @@
 
 <body>
     <div id="board">
-        <script>
-            for (var x=0; x<9; x++) {
-                for (var y=0; y<9; y++) {
-                    document.write('<div class="point" id="'+y+'_'+x+'"></div>');
-                }
-            }
-        </script>
+        
     </div>
 </body>
 </html>
