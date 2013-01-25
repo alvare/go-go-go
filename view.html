@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script type="text/javascript">
+        function WebSocketTest()
+        {
+            if ("WebSocket" in window)
+            {
+                // Let us open a web socket
+                var ws = new WebSocket("ws://localhost:8888/");
+                ws.onopen = function()
+                {
+                    // Web Socket is connected, send data using send()
+                    ws.send("Message to send");
+                    alert("Message is sent...");
+                };
+                ws.onmessage = function (evt) 
+                { 
+                    var received_msg = evt.data;
+                    alert("Message is received...");
+                };
+                ws.onclose = function()
+                { 
+                    // websocket is closed.
+                    alert("Connection is closed..."); 
+                };
+            }
+            else
+            {
+                // The browser doesn't support WebSocket
+                alert("WebSocket NOT supported by your Browser!");
+            }
+        }
+    </script>
+    <style>
+        #board {
+            background: url("board_9x9.png") no-repeat;
+            background-size: contain;
+            width: 630px;
+            height: 630px;
+            margin: auto;
+        }
+        .point {
+            height: 70px;
+            width: 70px;
+            float: left;
+           }
+    </style>
+</head>
+
+<body>
+    <div id="board">
+        <script>
+            for (var x=0; x<9; x++) {
+                for (var y=0; y<9; y++) {
+                    document.write('<div class="point" id="'+y+'_'+x+'"></div>');
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>
