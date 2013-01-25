@@ -13,6 +13,7 @@ gg = GoGame()
 class Handler(WebSocketHandler):
 
     def open(self):
+        self.write_message(gg.to_play)
         print "New connection opened."
 
     def on_message(self, message):
