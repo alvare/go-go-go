@@ -9,17 +9,31 @@
             {
                 // Let us open a web socket
                 var ws = new WebSocket("ws://localhost:8888/");
+                var turn = false;
+                $('#info').html('Espere su turno.');
+
                 ws.onopen = function()
                 {
                     // Web Socket is connected, send data using send()
-                    ws.send("Message to send");
-                    alert("Message is sent...");
                 };
+
                 ws.onmessage = function (evt) 
                 { 
-                    var msg = evt.data;
-                    $('body').append('<p>'+msg+'</p>');
+                    var msg = JSON.parse(evt.data);
+                    console.log(msg);
+                    if (msg.action == 'put') {
+                        $('#' + msg.x + '_' + msg.y).addClass(msg.color);
+                    } else if (msg.action == 'turn') {
+                        turn = true;
+                        $('#info').html('Juegue plz.');
+                    } else if (msg.action == 'remove') {
+                        $('#' + msg.x + '_' + msg.y).removeClass("black white");
+                    } else if (msg.action == 'nope') {
+                        $('#info').html('<span>Nope</span>');
+                        turn = true;
+                    }
                 };
+
                 ws.onclose = function()
                 { 
                     // websocket is closed.
@@ -28,9 +42,14 @@
                 
                 function put_stone(x,y) {
                     return function() {
-                        ws.send(x + '_' + y);
+                        if (turn) {
+                            ws.send(x + '_' + y);
+                            turn = false;
+                            $('#info').html('Espere su turno.');
+                        }
                     }
                 }
+
                 _.map(_.range(81), function(t) {
                     var px = t % 9;
                     var py = Math.floor(t / 9);
@@ -38,6 +57,7 @@
                     $('#board').append(point);
                     $(point).addClass('point');
                     $(point).attr({
+                        id: px+'_'+py,
                         x: px,
                         y: py
                     });
@@ -52,6 +72,10 @@
         });
     </script>
     <style>
+        #info {
+            margin: auto;
+            width: 50%;
+        }
         #board {
             background: url("board_9x9.png") no-repeat;
             background-size: contain;
@@ -63,11 +87,24 @@
             height: 70px;
             width: 70px;
             float: left;
-           }
+        }
+        .white {
+            background: url("w.png") no-repeat;
+            background-size: contain;
+        }
+        .black {
+            background: url("b.png") no-repeat;
+            background-size: contain;
+        }
+        span {
+            color: red;
+        }
     </style>
 </head>
 
 <body>
+    <div id="info">
+    </div>
     <div id="board">
         
     </div>
