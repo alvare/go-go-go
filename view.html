@@ -17,8 +17,8 @@
                 };
                 ws.onmessage = function (evt) 
                 { 
-                    var received_msg = evt.data;
-                    alert("Message is received..."+received_msg);
+                    var msg = evt.data;
+                    $('body').append('<p>'+msg+'</p>');
                 };
                 ws.onclose = function()
                 { 
@@ -26,7 +26,7 @@
                     alert("Connection is closed..."); 
                 };
                 
-                function handle(x,y) {
+                function put_stone(x,y) {
                     return function() {
                         ws.send(x + '_' + y);
                     }
@@ -41,7 +41,7 @@
                         x: px,
                         y: py
                     });
-                    $(point).click(handle(px,py));
+                    $(point).click(put_stone(px,py));
                 });
             }
             else

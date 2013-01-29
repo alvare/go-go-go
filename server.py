@@ -8,32 +8,22 @@ import signal, json
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-class Game(GoGame):
-    def __init__(self, size, handicap):
-        super(Game, size, handicap)
-        self.black = False
-        self.white = False
-
 class Handler(WebSocketHandler):
+
+    clients = set()
+
     def open(self):
-        global game
-        print "New connection opened."
-        if game.black:
-            self.color = "white"
-        else
-            self.color = "black"
-        self.write_message(json.dumps({"color": self.color}))
+        Handler.clients.add(self)
 
     def on_message(self, message):
-        global gg
-        print message
-        self.write_message("black" if gg.to_play== 1 else "white")
+        for client in Handler.clients:
+            client.write_message('Gil '+str(client))
 
     def on_close(self):
+        Handler.clients.remove(self)
         print "Connection closed."
 
 print "Server started."
-game = Game(9, 0)
 
 HTTPServer(Application([("/", Handler)])).listen(8888)
 IOLoop.instance().start()
