@@ -46,7 +46,11 @@ class Handler(WebSocketHandler):
 
     def on_close(self):
         Handler.clients.remove(self)
-        print "Connection closed."
+        if self.color["value"] == BLACK:
+            Handler.black = False
+        else:
+            Handler.white = False
+        print "Connection closed. Id: " + str(self)
 
 print "Server started."
 
